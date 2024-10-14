@@ -1,52 +1,75 @@
 .data
-    test_1:   .word 0x0F00000F
-    test_2:   .word 0x0000001B
-    test_3:   .word 0x00000002      
-    str1:     .string "\nresult1 is  " 
-    str2:     .string "\nresult2 is  " 
-    str3:     .string "\nresult3 is  "  
-    
+    datas: .word 0x0F00000F, 0x0E000001, 0x0000001B, 0x00000002, 0x00000001
+    ans:   .word 0x1, 0x0, 0x1, 0x0, 0x1
+    str1:     .string "\ncheckPalindrome(" 
+    str2:     .string ") is : " 
+    strError: .string "\nthe answer is wrong!!!"
 .text
 main:
-        # print "result1 is  " 
+        # Load datas reference
+        la s6, datas
+        
+        # Load ans reference
+        la s7, ans
+        
+        # Load the loop count
+        li s8, 5
+        
+print_numbers:
+        # print "\ncheckPalindrome(" 
         la a0, str1
         li a7, 4
         ecall
-        # print fp16_to_fp32(test1)  
-        lw  a0, test_1           
-        jal ra, my_clz
-        li a7, 1
+        
+        # print 'data'
+        lw a0, 0(s6)
+        li, a7, 34
         ecall
         
-        # print "result2 is  " 
+        # print ") is : " 
         la a0, str2
         li a7, 4
         ecall
-        # print fp16_to_fp32(test2)  
-        lw  a0, test_2           
-        jal ra, my_clz   
-        li a7, 1
-        ecall
         
-        # print "result3 is  " 
-        la a0, str3
+        # print checkPalindrome(data)  
+        lw a0, 0(s6)
+        jal ra, checkPalindrome
+        li, a7, 1
+        ecall
+     
+validation:
+        # check if fp16_to_fp32(data) == ans 
+        lw t0, 0(s7)
+        sub t0, t0, a0
+        beqz t0, check_loop
+        
+        # print "\nthe answer is wrong!!!"
+        la a0, strError
         li a7, 4
         ecall
-        # print fp16_to_fp32(test3)  
-        lw  a0, test_3           
-        jal ra, my_clz
-        li a7, 1
-        ecall
         
+check_loop:
+        # next data, ans
+        addi s6, s6, 4
+        addi s7, s7, 4
+        addi s8, s8, -1
+        bnez s8, print_numbers
+        
+exit:
         # Exit the program
         li a7, 10                  # System call code for exiting the program
         ecall                      # Make the exit system call
+        ret
 
+checkPalindrome:
+        # t0 is the input parameter N
+        
+        mv t0, a0
+        
 my_clz:
         # t0 is the input parameter x
         # t1 is c
         # t2 is r
-        mv t0, a0
         
         # int r = 0, c;    
         li t2, 0
@@ -100,7 +123,7 @@ my_clz:
         add t2, t2, t0
         
         
-checkPalindrome:
+back_to_checkPalindrome:
         # t0 is N
         # t1 is rev
         # t2 is num

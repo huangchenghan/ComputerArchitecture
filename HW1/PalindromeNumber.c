@@ -43,10 +43,9 @@ int checkPalindrome(uint32_t N)
 
 int main()
 {
-    uint32_t N1 = 0x0F00000F;
-    printf("result1 is : %d\n", checkPalindrome(N1));
-    uint32_t N2 = 0x0000001B;
-    printf("result2 is : %d\n", checkPalindrome(N2));
-    uint32_t N3 = 0x00000002;
-    printf("result3 is : %d\n", checkPalindrome(N3));
+    printf("checkPalindrome(0x0F00000F) is : %d\n", checkPalindrome(0x0F00000F));
+    printf("checkPalindrome(0x0E000001) is : %d\n", checkPalindrome(0x0E000001));
+    printf("checkPalindrome(0x0000001B) is : %d\n", checkPalindrome(0x0000001B));
+    printf("checkPalindrome(0x00000002) is : %d\n", checkPalindrome(0x00000002));
+    printf("checkPalindrome(0x00000001) is : %d\n", checkPalindrome(0x00000001));
 }

@@ -1,46 +1,65 @@
 .data
-    test_1:   .word 0x0000FFFF
-    test_2:   .word 0x00000710
-    test_3:   .word 0x000080F3        
-    str1:     .string "\nresult1 is  " 
-    str2:     .string "\nresult2 is  " 
-    str3:     .string "\nresult3 is  "  
-    
+    datas: .word 0x0618, 0x000F, 0x0000, 0x8000, 0x7C00, 0xFC00, 0x7CFF
+    ans:   .word 0x38c30000, 0x35700000, 0x0, 0x80000000, 0x7f800000, 0xff800000, 0x7f9fe000
+    str1:     .string "\nfp16_to_fp32(" 
+    str2:     .string ") is : " 
+    strError: .string "\nthe answer is wrong!!!"
 .text
 main:
-        # print "result1 is  " 
+        # Load datas reference
+        la s6, datas
+        
+        # Load ans reference
+        la s7, ans
+        
+        # Load the loop count
+        li s8, 7
+        
+print_numbers:
+        # print "\nfp16_to_fp32(" 
         la a0, str1
         li a7, 4
         ecall
-        # print fp16_to_fp32(test1)  
-        lw  a0, test_1           
-        jal ra, fp16_to_fp32
-        li a7, 1
+        
+        # print 'data'
+        lw a0, 0(s6)
+        li, a7, 34
         ecall
         
-        # print "result2 is  " 
+        # print ") is : " 
         la a0, str2
         li a7, 4
         ecall
-        # print fp16_to_fp32(test2)  
-        lw  a0, test_2           
-        jal ra, fp16_to_fp32   
-        li a7, 1
-        ecall
         
-        # print "result3 is  " 
-        la a0, str3
+        # print fp16_to_fp32(data)  
+        lw a0, 0(s6)
+        jal ra, fp16_to_fp32
+        li, a7, 34
+        ecall
+     
+validation:
+        # check if fp16_to_fp32(data) == ans 
+        lw t0, 0(s7)
+        sub t0, t0, a0
+        beqz t0, check_loop
+        
+        # print "\nthe answer is wrong!!!"
+        la a0, strError
         li a7, 4
         ecall
-        # print fp16_to_fp32(test3)  
-        lw  a0, test_3           
-        jal ra, fp16_to_fp32
-        li a7, 1
-        ecall
         
+check_loop:
+        # next data, ans
+        addi s6, s6, 4
+        addi s7, s7, 4
+        addi s8, s8, -1
+        bnez s8, print_numbers
+        
+exit:
         # Exit the program
         li a7, 10                  # System call code for exiting the program
         ecall                      # Make the exit system call
+        ret
 
 fp16_to_fp32:
         # a0 is the input parameter h

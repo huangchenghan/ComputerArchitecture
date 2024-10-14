@@ -44,10 +44,11 @@ static inline uint32_t fp16_to_fp32(uint16_t h) {
 
 int main()
 {
-    uint32_t N1 = 0xFFFF;
-    printf("result1 is : %d\n", fp16_to_fp32(N1));
-    uint32_t N2 = 0x0710;
-    printf("result2 is : %d\n", fp16_to_fp32(N2));
-    uint32_t N3 = 0x80F3;
-    printf("result3 is : %d\n", fp16_to_fp32(N3));
+    printf("fp16_to_fp32(0x0618) is : 0x%x\n", fp16_to_fp32(0x0618));  // normalized number
+    printf("fp16_to_fp32(0x000F) is : 0x%x\n", fp16_to_fp32(0x000F));  // denormalized number
+    printf("fp16_to_fp32(0x0000) is : 0x%x\n", fp16_to_fp32(0x0000));  // positive zero
+    printf("fp16_to_fp32(0x8000) is : 0x%x\n", fp16_to_fp32(0x8000));  // negative zero
+    printf("fp16_to_fp32(0x7C00) is : 0x%x\n", fp16_to_fp32(0x7C00));  //positive infinity
+    printf("fp16_to_fp32(0xFC00) is : 0x%x\n", fp16_to_fp32(0xFC00));  //negative infinity
+    printf("fp16_to_fp32(0x7CFF) is : 0x%x\n", fp16_to_fp32(0x7CFF));  // NaN, Not a Number
 }
